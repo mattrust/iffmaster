@@ -40,7 +40,8 @@ func NewListView(appData *AppData) *widget.List {
 	list.OnSelected = func(id widget.ListItemID) {
 		appData.chunkInfo.SetText(appData.nodeList[id].description)
 		appData.currentListIndex = id
-		appData.tableView.Refresh()
+		appData.hexTableView.Refresh()
+		appData.isoTableView.Refresh()
 	}
 
 	return list

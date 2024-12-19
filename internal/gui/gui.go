@@ -15,8 +15,9 @@ import (
 
 type AppData struct {
 	chunks *chunks.IFFChunk
-	app    fyne.App
-	win    fyne.Window
+
+	app fyne.App
+	win fyne.Window
 
 	listView *widget.List
 	nodeList []ListEntry
@@ -25,7 +26,8 @@ type AppData struct {
 
 	chunkInfo *widget.Label
 
-	tableView *widget.Table
+	hexTableView *widget.Table
+	isoTableView *widget.Table
 }
 
 func OpenGUI() {
@@ -48,7 +50,8 @@ func OpenGUI() {
 				appData.nodeList = make([]ListEntry, 0)
 				appData.currentListIndex = 0
 				appData.chunkInfo.SetText("")
-				appData.tableView.Refresh()
+				appData.hexTableView.Refresh()
+				appData.isoTableView.Refresh()
 
 				appData.chunks, err = chunks.ReadIFFFile(reader)
 				if err != nil {
@@ -59,7 +62,8 @@ func OpenGUI() {
 
 				appData.nodeList = ConvertIFFChunkToListNode(appData.chunks)
 				appData.listView.Refresh()
-				appData.tableView.Refresh() // Refresh tableView to show new data
+				appData.hexTableView.Refresh()
+				appData.isoTableView.Refresh()
 			}, appData.win)
 			fileDlg.Show()
 		}),
@@ -69,10 +73,17 @@ func OpenGUI() {
 	)
 
 	appData.listView = NewListView(&appData)
-	appData.tableView = CreateTableView(&appData)
+	appData.hexTableView = NewHexTableView(&appData)
+	appData.isoTableView = NewIsoTableView(&appData)
+
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Hex", appData.hexTableView),
+		container.NewTabItem("ISO8859-1", appData.isoTableView),
+	)
 
 	appData.chunkInfo = widget.NewLabel("")
-	cont1 := container.NewBorder(appData.chunkInfo, nil, nil, nil, appData.tableView)
+
+	cont1 := container.NewBorder(appData.chunkInfo, nil, nil, nil, tabs)
 	appData.win.SetContent(container.NewBorder(toolBar, nil, appData.listView, nil, cont1))
 
 	appData.win.Resize(fyne.NewSize(800, 600))
