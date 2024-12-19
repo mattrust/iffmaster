@@ -13,6 +13,7 @@ import (
 
 type ListEntry struct {
 	label            string
+	description      string
 	*chunks.IFFChunk // Embedding the IFFChunk struct
 }
 
@@ -37,8 +38,7 @@ func NewListView(appData *AppData) *widget.List {
 	)
 
 	list.OnSelected = func(id widget.ListItemID) {
-		chunk := appData.nodeList[id].IFFChunk
-		appData.chunkInfo.SetText(fmt.Sprintf("ID: %s Type: %s Size: %d", chunk.ID, chunk.SubID, chunk.Size))
+		appData.chunkInfo.SetText(appData.nodeList[id].description)
 		appData.currentListIndex = id
 		appData.tableView.Refresh()
 	}
@@ -55,7 +55,12 @@ func ConvertIFFChunkToListNode(chunk *chunks.IFFChunk) []ListEntry {
 		for i := 0; i < level; i++ {
 			indentation += "."
 		}
-		nodeList = append(nodeList, ListEntry{label: indentation + chunk.ID, IFFChunk: chunk})
+		nodeList = append(nodeList, ListEntry{
+			label: indentation + chunk.ID,
+			description: fmt.Sprintf(
+				"Type: %s - Desc.: %s - Size: %d",
+				chunk.ChType, chunks.GetChunkDescription(chunk.ChType), chunk.Size),
+			IFFChunk: chunk})
 		for _, child := range chunk.Childs {
 			traverse(child, level+1)
 		}

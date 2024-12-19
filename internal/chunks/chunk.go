@@ -8,17 +8,27 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 
 	"fyne.io/fyne/v2"
 )
 
 type IFFChunk struct {
-	ID      string
-	Size    uint32
-	SubID   string
-	Data    []byte
-	Childs  []*IFFChunk
+	// the chunk data from the file
+	ID    string
+	Size  uint32
+	SubID string
+	Data  []byte
+
+	// the children of the chunk
+	Childs []*IFFChunk
+
+	// the sum of the size of the chunk and all its children
 	SumSize int64
+
+	// SubID for group chunks, e.g. ILBM
+	// parent's SubID + ID for data chunks, e.g. ILBM.BMHD
+	ChType string
 }
 
 func ReadIFFFile(reader fyne.URIReadCloser) (*IFFChunk, error) {
@@ -98,8 +108,18 @@ func readChunk(reader io.Reader, parentChunk *IFFChunk, maxSize int64, level int
 			return nil, err
 		}
 		chunk.SumSize += 4
+
+		chunk.ChType = chunk.SubID
 	} else {
 		// we have a data chunk
+
+		// for some generic chunks we prefix with (ANY)
+		if slices.Contains([]string{"(C) ", "AUTH", "ANNO", "VERS"}, chunk.ID) {
+			chunk.ChType = "(ANY)." + chunk.ID
+		} else {
+			chunk.ChType = parentChunk.SubID + "." + chunk.ID
+		}
+
 		if chunk.SumSize+int64(chunk.Size) > maxSize {
 			return nil, fmt.Errorf("SumSize+Size > maxSize")
 		}
