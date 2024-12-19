@@ -5,6 +5,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -14,13 +15,12 @@ func CreateTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
 		func() (int, int) {
-			//fmt.Printf("NodeList: %d\n", len(appData.nodeList))
+			log.Printf("NodeList entries %d\n", len(appData.nodeList))
 			if len(appData.nodeList) > appData.currentListIndex {
 				len := len(appData.nodeList[appData.currentListIndex].Data)
-				if len < 16 {
-					return 1, len
-				} else {
-					return len / 16, 16
+				if len > 0 {
+					log.Printf("NodeList chunk len %d\n", len)
+					return len/16 + 1, 16
 				}
 			}
 			return 0, 0
@@ -33,16 +33,16 @@ func CreateTableView(appData *AppData) *widget.Table {
 
 		// Provide the content for a specific cell
 		func(i widget.TableCellID, o fyne.CanvasObject) {
-			//fmt.Printf("Current %d Row: %d Col %d\n", appData.currentListIndex, i.Row, i.Col)
-			if len(appData.nodeList) > appData.currentListIndex {
+			if appData.currentListIndex < len(appData.nodeList) {
 				idx := i.Row*16 + i.Col
 				if idx < len(appData.nodeList[appData.currentListIndex].Data) {
 					o.(*widget.Label).SetText(fmt.Sprintf("%02X",
 						appData.nodeList[appData.currentListIndex].Data[idx]))
+					return
 				}
-				return
 			}
-			o.(*widget.Label).SetText("--")
+			// Since we always have 16 columns, we must fill the empty ones
+			o.(*widget.Label).SetText("")
 		},
 	)
 

@@ -44,6 +44,12 @@ func OpenGUI() {
 					return
 				}
 
+				// reset AppData and GUI
+				appData.nodeList = make([]ListEntry, 0)
+				appData.currentListIndex = 0
+				appData.chunkInfo.SetText("")
+				appData.tableView.Refresh()
+
 				appData.chunks, err = chunks.ReadIFFFile(reader)
 				if err != nil {
 					dialog.ShowError(err, appData.win)
@@ -53,6 +59,7 @@ func OpenGUI() {
 
 				appData.nodeList = ConvertIFFChunkToListNode(appData.chunks)
 				appData.listView.Refresh()
+				appData.tableView.Refresh() // Refresh tableView to show new data
 			}, appData.win)
 			fileDlg.Show()
 		}),
