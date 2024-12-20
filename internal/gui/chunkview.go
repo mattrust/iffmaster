@@ -85,6 +85,39 @@ func NewIsoTableView(appData *AppData) *widget.Table {
 	return table
 }
 
+func NewStructTableView(appData *AppData) *widget.Table {
+	table := widget.NewTable(
+		// Provide the size of the table
+		func() (int, int) {
+			log.Printf("NodeList entries %d\n", len(appData.nodeList))
+			if len(appData.nodeList) > appData.currentListIndex {
+				len := len(appData.nodeList[appData.currentListIndex].structure)
+				if len > 0 {
+					log.Printf("NodeList chunk len %d\n", len)
+					return len, 2
+				}
+			}
+			return 0, 0
+		},
+
+		// Provide the content template
+		func() fyne.CanvasObject {
+			return widget.NewLabel("AAAAAAAAAAAAAAAAAAAA")
+		},
+
+		// Provide the content for a specific cell
+		func(i widget.TableCellID, o fyne.CanvasObject) {
+			if appData.currentListIndex < len(appData.nodeList) {
+				o.(*widget.Label).SetText(appData.nodeList[appData.currentListIndex].structure[i.Row][i.Col])
+				return
+			}
+			o.(*widget.Label).SetText("")
+		},
+	)
+
+	return table
+}
+
 func iso8859ToUtf8Char(isoChar byte) string {
 	// handle special characters
 	if isoChar == 0 {

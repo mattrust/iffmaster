@@ -26,8 +26,9 @@ type AppData struct {
 
 	chunkInfo *widget.Label
 
-	hexTableView *widget.Table
-	isoTableView *widget.Table
+	hexTableView    *widget.Table
+	isoTableView    *widget.Table
+	structTableView *widget.Table
 }
 
 func OpenGUI() {
@@ -52,6 +53,7 @@ func OpenGUI() {
 				appData.chunkInfo.SetText("")
 				appData.hexTableView.Refresh()
 				appData.isoTableView.Refresh()
+				appData.structTableView.Refresh()
 
 				appData.chunks, err = chunks.ReadIFFFile(reader)
 				if err != nil {
@@ -64,6 +66,7 @@ func OpenGUI() {
 				appData.listView.Refresh()
 				appData.hexTableView.Refresh()
 				appData.isoTableView.Refresh()
+				appData.structTableView.Refresh()
 			}, appData.win)
 			fileDlg.Show()
 		}),
@@ -75,11 +78,12 @@ func OpenGUI() {
 	appData.listView = NewListView(&appData)
 	appData.hexTableView = NewHexTableView(&appData)
 	appData.isoTableView = NewIsoTableView(&appData)
+	appData.structTableView = NewStructTableView(&appData)
 
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Hex", appData.hexTableView),
 		container.NewTabItem("ISO8859-1", appData.isoTableView),
-	)
+		container.NewTabItem("Structure", appData.structTableView))
 
 	appData.chunkInfo = widget.NewLabel("")
 

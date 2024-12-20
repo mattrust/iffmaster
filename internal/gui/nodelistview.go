@@ -14,6 +14,7 @@ import (
 type ListEntry struct {
 	label            string
 	description      string
+	structure        [][2]string
 	*chunks.IFFChunk // Embedding the IFFChunk struct
 }
 
@@ -61,7 +62,8 @@ func ConvertIFFChunkToListNode(chunk *chunks.IFFChunk) []ListEntry {
 			description: fmt.Sprintf(
 				"Type: %s - Desc.: %s - Size: %d",
 				chunk.ChType, chunks.GetChunkDescription(chunk.ChType), chunk.Size),
-			IFFChunk: chunk})
+			IFFChunk:  chunk,
+			structure: chunks.GetChunkStructure(chunk.ChType, chunk.Data)})
 		for _, child := range chunk.Childs {
 			traverse(child, level+1)
 		}
