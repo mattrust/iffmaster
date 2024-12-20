@@ -5,7 +5,6 @@ package gui
 
 import (
 	"fmt"
-	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -16,11 +15,9 @@ func NewHexTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
 		func() (int, int) {
-			log.Printf("NodeList entries %d\n", len(appData.nodeList))
 			if len(appData.nodeList) > appData.currentListIndex {
 				len := len(appData.nodeList[appData.currentListIndex].Data)
 				if len > 0 {
-					log.Printf("NodeList chunk len %d\n", len)
 					return len/16 + 1, 16
 				}
 			}
@@ -89,11 +86,9 @@ func NewStructTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
 		func() (int, int) {
-			log.Printf("NodeList entries %d\n", len(appData.nodeList))
 			if len(appData.nodeList) > appData.currentListIndex {
 				len := len(appData.nodeList[appData.currentListIndex].structure)
 				if len > 0 {
-					log.Printf("NodeList chunk len %d\n", len)
 					return len, 2
 				}
 			}

@@ -14,7 +14,7 @@ import (
 type ListEntry struct {
 	label            string
 	description      string
-	structure        [][2]string
+	structure        chunks.StructResult
 	*chunks.IFFChunk // Embedding the IFFChunk struct
 }
 
