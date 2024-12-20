@@ -43,6 +43,7 @@ func NewListView(appData *AppData) *widget.List {
 		appData.currentListIndex = id
 		appData.hexTableView.Refresh()
 		appData.isoTableView.Refresh()
+		appData.structTableView.Refresh()
 	}
 
 	return list
