@@ -202,9 +202,10 @@ func handleIlbmCrng(data []byte) StructResult {
 	rate := getWORD(data, &offset)
 	result = append(result, [2]string{"Rate", fmt.Sprintf("%d", rate)})
 	flags := getWORD(data, &offset)
-	if flags&1 != 0 {
+	if flags&1 == 1 {
 		result = append(result, [2]string{"Flags", "Active"})
-	} else if flags&2 != 0 {
+	}
+	if flags&2 == 2 {
 		result = append(result, [2]string{"Flags", "Reverse"})
 	}
 	low := getUBYTE(data, &offset)
