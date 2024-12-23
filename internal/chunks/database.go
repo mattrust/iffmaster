@@ -46,7 +46,12 @@ var structData = map[string]ChunkData{
 
 	"AIFF": {nil, "Audio Samples"},
 	"ANBM": {nil, "Animated Bitmap"},
-	"ANIM": {nil, "CEL Animations"},
+
+	"ANIM":      {nil, "CEL Animations"},
+	"ILBM.ANHD": {handleAnimAnhd, "Animation Header"},   // parent is ILBM!
+	"ILBM.DLTA": {nil, "Delta Compression"},             // parent is ILBM!
+	"ILBM.DPAN": {handleAnimDpan, "Display Parameters"}, // parent is ILBM!
+
 	"CMUS": {nil, "Musical Score"},
 	"CSET": {nil, "Text Character Set"},
 	"DEEP": {nil, "Chunky Pixel Image"},
