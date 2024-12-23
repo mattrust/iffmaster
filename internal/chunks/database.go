@@ -30,8 +30,20 @@ var structData = map[string]ChunkData{
 	"(any).TEXT": {nil, "ASCII Text"},
 	"(any).(c) ": {nil, "Copyright"},
 
-	"8SVX": {nil, "8-Bit Sampled Voice"},
-	"ACBM": {nil, "Amiga Continuous Bitmap"},
+	"8SVX":      {nil, "8-Bit Sampled Voice"},
+	"8SVX.VHDR": {handle8svxVhdr, "Voice Header"},
+	"8SVX.ATAK": {handle8svxAtakRlse, "Attack"},
+	"8SVX.RLSE": {handle8svxAtakRlse, "Release"},
+
+	"ACBM":      {nil, "Amiga Continuous Bitmap"},
+	"ACBM.ABIT": {nil, "Bitmap Body"},
+	"ACBM.BMHD": {handleIlbmBmhd, "Bitmap Header"},      // reusing ILBM
+	"ACBM.CMAP": {handleIlbmCmap, "Color Map"},          // reusing ILBM
+	"ACBM.GRAB": {handleIlbmGrab, "Grab (Hotspot)"},     // reusing ILBM
+	"ACBM.DEST": {handleIlbmDest, "Destination"},        // reusing ILBM
+	"ACBM.SPRT": {handleIlbmSprt, "Sprite"},             // reusing ILBM
+	"ACBM.CAMG": {handleIlbmCamg, "Amiga Display Mode"}, // reusing ILBM
+
 	"AIFF": {nil, "Audio Samples"},
 	"ANBM": {nil, "Animated Bitmap"},
 	"ANIM": {nil, "CEL Animations"},
@@ -58,18 +70,18 @@ var structData = map[string]ChunkData{
 	"ILBM.CMYK": {nil, "Cyan Magenta Yellow Black"},
 	"ILBM.CNAM": {nil, "Color Naming"},
 	"ILBM.CTBL": {nil, "Dynamic Color Palette"},
-	"ILBM.CRNG": {nil, "Color Range"},
+	"ILBM.CRNG": {handleIlbmCrng, "Color Range"},
 	"ILBM.DPPS": {nil, "DPaint Page State"},
 	"ILBM.DRNG": {nil, "DPaint Range"},
 	"ILBM.DYCP": {nil, "Dynamic Color Palette"},
 	"ILBM.DPI ": {handleIlbmDpi, "Dots Per Inch"},
 	"ILBM.DPPV": {nil, "DPaint Perspective"},
-	"ILBM.DEST": {nil, "Destination"},
+	"ILBM.DEST": {handleIlbmDest, "Destination"},
 	"ILBM.EPSF": {nil, "Encapsulated Postscript"},
 	"ILBM.GRAB": {handleIlbmGrab, "Grab (Hotspot)"},
 	"ILBM.PCHG": {nil, "Line By line Palette"},
 	"ILBM.PRVW": {nil, "Preview"},
-	"ILBM.SPRT": {nil, "Sprite"},
+	"ILBM.SPRT": {handleIlbmSprt, "Sprite"},
 	"ILBM.TINY": {nil, "Thumbnail"},
 	"ILBM.XBMI": {nil, "Extended BitMap Information"},
 	"ILBM.XSSL": {nil, "3D X-Specs Image"},

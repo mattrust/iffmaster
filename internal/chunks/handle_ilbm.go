@@ -143,3 +143,74 @@ func handleIlbmDpi(data []byte) StructResult {
 
 	return result
 }
+
+func handleIlbmDest(data []byte) StructResult {
+	log.Println("Handling ILBM.DEST chunk")
+
+	//typedef struct {
+	//	UBYTE depth;
+	//	UBYTE pad1;
+	//	UWORD planePick;
+	//	UWORD planeOnOff;
+	//	UWORD planeMask;
+	//} Destmerge;
+
+	var offset uint32
+	var result StructResult
+
+	depth := getUBYTE(data, &offset)
+	result = append(result, [2]string{"Depth", fmt.Sprintf("%d", depth)})
+	offset++ // ignore pad1
+	planePick := getUWORD(data, &offset)
+	result = append(result, [2]string{"Plane Pick", fmt.Sprintf("%d", planePick)})
+	planeOnOff := getUWORD(data, &offset)
+	result = append(result, [2]string{"Plane On/Off", fmt.Sprintf("%d", planeOnOff)})
+	planeMask := getUWORD(data, &offset)
+	result = append(result, [2]string{"Plane Mask", fmt.Sprintf("%d", planeMask)})
+
+	return result
+}
+
+func handleIlbmSprt(data []byte) StructResult {
+	log.Println("Handling ILBM.SPRT chunk")
+
+	// typedef UWORD SpritePrecedence;
+
+	var offset uint32
+	var result StructResult
+
+	spritePrecedence := getUWORD(data, &offset)
+	result = append(result, [2]string{"Sprite Precedence", fmt.Sprintf("%d", spritePrecedence)})
+
+	return result
+}
+
+func handleIlbmCrng(data []byte) StructResult {
+	log.Println("Handling ILBM.CRNG chunk")
+
+	//typedef struct {
+	//	WORD  pad1;
+	//	WORD  rate;
+	//	WORD  flags;
+	//	UBYTE low, high;
+	//} CRange;
+
+	var offset uint32
+	var result StructResult
+
+	offset += 2 // ignore pad1
+	rate := getWORD(data, &offset)
+	result = append(result, [2]string{"Rate", fmt.Sprintf("%d", rate)})
+	flags := getWORD(data, &offset)
+	if flags&1 != 0 {
+		result = append(result, [2]string{"Flags", "Active"})
+	} else if flags&2 != 0 {
+		result = append(result, [2]string{"Flags", "Reverse"})
+	}
+	low := getUBYTE(data, &offset)
+	result = append(result, [2]string{"Low", fmt.Sprintf("%d", low)})
+	high := getUBYTE(data, &offset)
+	result = append(result, [2]string{"High", fmt.Sprintf("%d", high)})
+
+	return result
+}
