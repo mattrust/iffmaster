@@ -1,8 +1,13 @@
 package chunks
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 func handle8svxVhdr(data []byte) StructResult {
+	log.Println("Handling 8SVX.VHDR chunk")
+
 	//typedef struct {
 	//	ULONG oneShotHiSamples,
 	//		  repeatHiSamples,
@@ -46,6 +51,8 @@ func handle8svxVhdr(data []byte) StructResult {
 }
 
 func handle8svxAtakRlse(data []byte) StructResult {
+	log.Println("Handling 8SVX.ATAK or 8SVX.RLSE chunk")
+
 	//typedef struct {
 	//	UWORD duration;
 	//	Fixed dest;
