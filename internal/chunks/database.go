@@ -7,101 +7,112 @@ import (
 	"log"
 )
 
-type ChunkHandler func(data []byte) StructResult
 type StructResult [][2]string
-
-var chunkHandlers = map[string]ChunkHandler{
-	"ILBM.BMHD": handleIlbmBmhd,
-	"ILBM.CMAP": handleIlbmCmap,
-	"ILBM.GRAB": handleIlbmGrab,
-	"ILBM.CAMG": handleIlbmCamg,
-	"ILBM.DPI ": handleIlbmDpi,
+type ChunkHandler func(data []byte) StructResult
+type ChunkData struct {
+	Handler     ChunkHandler
+	Description string
 }
 
-var chunkDescriptions = map[string]string{
-	"(ANY).(C) ": "Copyright notice and license",
-	"(ANY).ANNO": "Annotation or comment",
-	"(ANY).AUTH": "Author name",
-	"(ANY).VERS": "File version",
+var structData = map[string]ChunkData{
+	// generic chunks
+	"(any).ANNO": {nil, "Annotation"},
+	"(any).AUTH": {nil, "Author"},
+	"(any).CHRS": {nil, "Character String"},
+	"(any).CSET": {nil, "Character Set"},
+	"(any).FRED": {nil, "ASDG Private"},
+	"(any).FVER": {nil, "Version"},
+	"(any).HLID": {nil, "Hotlink"},
+	"(any).INFO": {nil, "Icon Data"},
+	"(any).JUNK": {nil, "To Be Ignored"},
+	"(any).UTF8": {nil, "UTF-8 Character Text"},
+	"(any).NAME": {nil, "Name"},
+	"(any).TEXT": {nil, "ASCII Text"},
+	"(any).(c) ": {nil, "Copyright"},
 
-	"8SVX": "8-Bit Sampled Voice",
-	"ACBM": "Amiga Continuous Bitmap",
-	"AIFF": "Audio Samples",
-	"ANBM": "Animated Bitmap",
-	"ANIM": "CEL Animations",
-	"CMUS": "Musical Score",
-	"CSET": "Text Character Set",
-	"DEEP": "Chunky Pixel Image",
-	"DTYP": "DataType Identification",
-	"DR2D": "2-D Objects",
-	"EXEC": "Executable Code",
-	"FANT": "Movie Format",
-	"FAXX": "Facsimile Image",
-	"FTXT": "Formatted Text",
-	"FVER": "Version String",
-	"HEAD": "Flow Idea Processor Format",
-	"HLID": "Hotlink Identification",
+	"8SVX": {nil, "8-Bit Sampled Voice"},
+	"ACBM": {nil, "Amiga Continuous Bitmap"},
+	"AIFF": {nil, "Audio Samples"},
+	"ANBM": {nil, "Animated Bitmap"},
+	"ANIM": {nil, "CEL Animations"},
+	"CMUS": {nil, "Musical Score"},
+	"CSET": {nil, "Text Character Set"},
+	"DEEP": {nil, "Chunky Pixel Image"},
+	"DTYP": {nil, "DataType Identification"},
+	"DR2D": {nil, "2-D Objects"},
+	"EXEC": {nil, "Executable Code"},
+	"FANT": {nil, "Movie Format"},
+	"FAXX": {nil, "Facsimile Image"},
+	"FTXT": {nil, "Formatted Text"},
+	"FVER": {nil, "Version String"},
+	"HEAD": {nil, "Flow Idea Processor Format"},
+	"HLID": {nil, "Hotlink Identification"},
 
-	"ILBM":      "InterLeaved BitMap",
-	"ILBM.BMHD": "Bitmap Header",
-	"ILBM.BODY": "Bitmap Body",
-	"ILBM.CAMG": "Amiga Display Mode",
-	"ILBM.CCRT": "Color Cycling",
-	"ILBM.CMAP": "Color Map",
-	"ILBM.CLUT": "Color Look Up Table",
-	"ILBM.CMYK": "Cyan Magenta Yellow Black",
-	"ILBM.CNAM": "Color Naming",
-	"ILBM.CTBL": "Dynamic Color Palette",
-	"ILBM.CRNG": "Color Range",
-	"ILBM.DPPS": "DPaint Page State",
-	"ILBM.DRNG": "DPaint Range",
-	"ILBM.DYCP": "Dynamic Color Palette",
-	"ILBM.DPI ": "Dots Per Inch",
-	"ILBM.DPPV": "DPaint Perspective",
-	"ILBM.DEST": "Destination",
-	"ILBM.EPSF": "Encapsulated Postscript",
-	"ILBM.GRAB": "Grab (Hotspot)",
-	"ILBM.PCHG": "Line By line Palette",
-	"ILBM.PRVW": "Preview",
-	"ILBM.SPRT": "Sprite",
-	"ILBM.TINY": "Thumbnail",
-	"ILBM.XBMI": "Extended BitMap Information",
-	"ILBM.XSSL": "3D X-Specs Image",
+	"ILBM":      {nil, "InterLeaved BitMap"},
+	"ILBM.BMHD": {handleIlbmBmhd, "Bitmap Header"},
+	"ILBM.BODY": {nil, "Bitmap Body"},
+	"ILBM.CAMG": {handleIlbmCamg, "Amiga Display Mode"},
+	"ILBM.CCRT": {nil, "Color Cycling"},
+	"ILBM.CMAP": {handleIlbmCmap, "Color Map"},
+	"ILBM.CLUT": {nil, "Color Look Up Table"},
+	"ILBM.CMYK": {nil, "Cyan Magenta Yellow Black"},
+	"ILBM.CNAM": {nil, "Color Naming"},
+	"ILBM.CTBL": {nil, "Dynamic Color Palette"},
+	"ILBM.CRNG": {nil, "Color Range"},
+	"ILBM.DPPS": {nil, "DPaint Page State"},
+	"ILBM.DRNG": {nil, "DPaint Range"},
+	"ILBM.DYCP": {nil, "Dynamic Color Palette"},
+	"ILBM.DPI ": {handleIlbmDpi, "Dots Per Inch"},
+	"ILBM.DPPV": {nil, "DPaint Perspective"},
+	"ILBM.DEST": {nil, "Destination"},
+	"ILBM.EPSF": {nil, "Encapsulated Postscript"},
+	"ILBM.GRAB": {handleIlbmGrab, "Grab (Hotspot)"},
+	"ILBM.PCHG": {nil, "Line By line Palette"},
+	"ILBM.PRVW": {nil, "Preview"},
+	"ILBM.SPRT": {nil, "Sprite"},
+	"ILBM.TINY": {nil, "Thumbnail"},
+	"ILBM.XBMI": {nil, "Extended BitMap Information"},
+	"ILBM.XSSL": {nil, "3D X-Specs Image"},
 
-	"INFO": "Icon Information",
-	"JUNK": "Junk Data",
-	"MTRX": "Matrix Data Storage",
-	"OB3D": "3-D Object Format",
-	"PGTB": "Program Traceback",
-	"PMBC": "High-color Image Format",
-	"PRSP": "Perspective Move",
-	"RGBN": "Image Data",
-	"RGB8": "Image Data",
-	"SAMP": "Sampled Sound",
-	"SMUS": "Simple Musical Score",
-	"SPLT": "File Splitting",
-	"TDDD": "3-D Rendering Data",
-	"TMUI": "Project File Format",
-	"TREE": "Tree Data Structure",
-	"TRKR": "Tracker Music Module",
-	"UTF8": "UTF-8 Unicode Text",
-	"WORD": "Document Storage",
-	"YUVN": "YUV Image Data",
+	"INFO": {nil, "Icon Information"},
+	"JUNK": {nil, "Junk Data"},
+	"MTRX": {nil, "Matrix Data Storage"},
+	"OB3D": {nil, "3-D Object Format"},
+	"PGTB": {nil, "Program Traceback"},
+	"PMBC": {nil, "High-color Image Format"},
+	"PRSP": {nil, "Perspective Move"},
+	"RGBN": {nil, "Image Data"},
+	"RGB8": {nil, "Image Data"},
+	"SAMP": {nil, "Sampled Sound"},
+	"SMUS": {nil, "Simple Musical Score"},
+	"SPLT": {nil, "File Splitting"},
+	"TDDD": {nil, "3-D Rendering Data"},
+	"TMUI": {nil, "Project File Format"},
+	"TREE": {nil, "Tree Data Structure"},
+	"TRKR": {nil, "Tracker Music Module"},
+	"UTF8": {nil, "UTF-8 Unicode Text"},
+	"WORD": {nil, "Document Storage"},
+	"YUVN": {nil, "YUV Image Data"},
 }
 
-func GetChunkDescription(chType string) string {
-	desc := chunkDescriptions[chType]
-	log.Printf("Chunk %s: %s\n", chType, desc)
-	return desc
-}
-
-func GetChunkStructure(chType string, data []byte) StructResult {
+func GetStructData(chType string, data []byte) (string, StructResult) {
 	var result StructResult
+	var description string
 
-	if handler, exists := chunkHandlers[chType]; exists {
-		result = handler(data)
+	if chunkData, exists := structData[chType]; exists {
+		description = chunkData.Description
+		handler := chunkData.Handler
+		if handler != nil {
+			result = handler(data)
+		} else {
+			result = append(result, [2]string{"", "(not available)"})
+		}
+	} else {
+		description = "(unknown)"
+		result = append(result, [2]string{"", "(unknown)"})
 	}
-	return result
+
+	return description, result
 }
 
 func getUWORD(data []byte, offset *uint32) uint16 {

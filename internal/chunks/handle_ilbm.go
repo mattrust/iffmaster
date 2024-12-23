@@ -120,7 +120,7 @@ func handleIlbmCamg(data []byte) StructResult {
 	viewMode := getULONG(data, &offset)
 
 	// TODO: decode viewMode
-	result = append(result, [2]string{"View Mode", fmt.Sprintf("%x", viewMode)})
+	result = append(result, [2]string{"View Mode", fmt.Sprintf("0x%x", viewMode)})
 
 	return result
 }

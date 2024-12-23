@@ -58,13 +58,14 @@ func ConvertIFFChunkToListNode(chunk *chunks.IFFChunk) []ListEntry {
 		for i := 0; i < level; i++ {
 			indentation += "."
 		}
+		description, structData := chunks.GetStructData(chunk.ChType, chunk.Data)
 		nodeList = append(nodeList, ListEntry{
 			label: indentation + chunk.ID,
 			description: fmt.Sprintf(
 				"Type: %s - Desc.: %s - Size: %d",
-				chunk.ChType, chunks.GetChunkDescription(chunk.ChType), chunk.Size),
+				chunk.ChType, description, chunk.Size),
 			IFFChunk:  chunk,
-			structure: chunks.GetChunkStructure(chunk.ChType, chunk.Data)})
+			structure: structData})
 		for _, child := range chunk.Childs {
 			traverse(child, level+1)
 		}

@@ -113,9 +113,9 @@ func readChunk(reader io.Reader, parentChunk *IFFChunk, maxSize int64, level int
 	} else {
 		// we have a data chunk
 
-		// for some generic chunks we prefix with (ANY)
-		if slices.Contains([]string{"(C) ", "AUTH", "ANNO", "VERS"}, chunk.ID) {
-			chunk.ChType = "(ANY)." + chunk.ID
+		// for some generic chunks we prefix with (any)
+		if isGeneric(chunk.ID) {
+			chunk.ChType = "(any)." + chunk.ID
 		} else {
 			chunk.ChType = parentChunk.SubID + "." + chunk.ID
 		}
@@ -167,4 +167,11 @@ func PrintIffChunk(chunk *IFFChunk, level int) {
 	for _, child := range chunk.Childs {
 		PrintIffChunk(child, level+1)
 	}
+}
+
+func isGeneric(id string) bool {
+
+	return slices.Contains([]string{"ANNO", "AUTH", "CHRS",
+		"CSET", "FRED", "FVER", "HLID", "INFO", "JUNK", "UTF8",
+		"NAME", "TEXT", "(c) "}, id)
 }
