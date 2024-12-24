@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func handle8svxVhdr(data []byte) StructResult {
+func handle8svxVhdr(data []byte) (StructResult, error) {
 	log.Println("Handling 8SVX.VHDR chunk")
 
 	//typedef struct {
@@ -21,22 +21,40 @@ func handle8svxVhdr(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	oneShotHiSamples := getULONG(data, &offset)
+	oneShotHiSamples, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"One Shot Hi Samples", fmt.Sprintf("%d", oneShotHiSamples)})
 
-	repeatHiSamples := getULONG(data, &offset)
+	repeatHiSamples, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Repeat Hi Samples", fmt.Sprintf("%d", repeatHiSamples)})
 
-	samplesPerHiCycle := getULONG(data, &offset)
+	samplesPerHiCycle, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Samples Per Hi Cycle", fmt.Sprintf("%d", samplesPerHiCycle)})
 
-	samplesPerSec := getUWORD(data, &offset)
+	samplesPerSec, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Samples Per Sec", fmt.Sprintf("%d", samplesPerSec)})
 
-	ctOctave := getUBYTE(data, &offset)
+	ctOctave, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Octave", fmt.Sprintf("%d", ctOctave)})
 
-	sCompression := getUBYTE(data, &offset)
+	sCompression, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	switch sCompression {
 	case 0:
 		result = append(result, [2]string{"Compression", "None"})
@@ -44,13 +62,16 @@ func handle8svxVhdr(data []byte) StructResult {
 		result = append(result, [2]string{"Compression", "Fibonacci-Delta-Encoded"})
 	}
 
-	volume := getLONG(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
+	volume, err := getBeLong(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Volume", fmt.Sprintf("%d", volume)})
-	return result
 
+	return result, nil
 }
 
-func handle8svxAtakRlse(data []byte) StructResult {
+func handle8svxAtakRlse(data []byte) (StructResult, error) {
 	log.Println("Handling 8SVX.ATAK or 8SVX.RLSE chunk")
 
 	//typedef struct {
@@ -61,11 +82,17 @@ func handle8svxAtakRlse(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	duration := getUWORD(data, &offset)
+	duration, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Duration", fmt.Sprintf("%d", duration)})
 
-	dest := getLONG(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
+	dest, err := getBeLong(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Dest", fmt.Sprintf("%d", dest)})
 
-	return result
+	return result, nil
 }

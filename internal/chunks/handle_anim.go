@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func handleAnimAnhd(data []byte) StructResult {
+func handleAnimAnhd(data []byte) (StructResult, error) {
 	log.Println("Handling ANIM.ANHD chunk")
 
 	//typedef struct {
@@ -25,7 +25,10 @@ func handleAnimAnhd(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	operation := getUBYTE(data, &offset)
+	operation, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, nil
+	}
 	switch operation {
 	case 0:
 		result = append(result, [2]string{"Operation", "Direct"})
@@ -46,29 +49,56 @@ func handleAnimAnhd(data []byte) StructResult {
 	case 74:
 		result = append(result, [2]string{"Operation", "Graham"})
 	}
-	mask := getUBYTE(data, &offset)
+	mask, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Mask", fmt.Sprintf("%d", mask)})
 
-	w := getUWORD(data, &offset)
-	h := getUWORD(data, &offset)
+	w, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	h, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Width : Height", fmt.Sprintf("%d : %d", w, h)})
 
-	x := getWORD(data, &offset)
-	y := getWORD(data, &offset)
+	x, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	y, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Position x : y", fmt.Sprintf("%d : %d", x, y)})
 
-	abstime := getULONG(data, &offset)
+	abstime, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Absolute Time", fmt.Sprintf("%d", abstime)})
 
-	reltime := getULONG(data, &offset)
+	reltime, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Relative Time", fmt.Sprintf("%d", reltime)})
 
-	interleave := getUBYTE(data, &offset)
+	interleave, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Interleave", fmt.Sprintf("%d", interleave)})
 
 	offset++ // ignore pad0
 
-	bits := getULONG(data, &offset)
+	bits, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	/*
 	   bit#    =0                   =1
 	   0      short data          long data
@@ -115,10 +145,10 @@ func handleAnimAnhd(data []byte) StructResult {
 		result = append(result, [2]string{"Bit 5", "Long Info Offsets"})
 	}
 
-	return result
+	return result, nil
 }
 
-func handleAnimDpan(data []byte) StructResult {
+func handleAnimDpan(data []byte) (StructResult, error) {
 	log.Println("Handling ANIM.DPAN chunk")
 
 	//typedef struct {
@@ -130,14 +160,23 @@ func handleAnimDpan(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	version := getUWORD(data, &offset)
+	version, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Version", fmt.Sprintf("%d", version)})
 
-	nframes := getUWORD(data, &offset)
+	nframes, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Number of Frames", fmt.Sprintf("%d", nframes)})
 
-	flags := getULONG(data, &offset)
+	flags, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Flags", fmt.Sprintf("%032b", flags)})
 
-	return result
+	return result, nil
 }

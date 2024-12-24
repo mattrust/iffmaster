@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func handleIlbmBmhd(data []byte) StructResult {
+func handleIlbmBmhd(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.BMHD chunk")
 
 	//typedef struct {
@@ -23,18 +23,36 @@ func handleIlbmBmhd(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	w := getUWORD(data, &offset)
-	h := getUWORD(data, &offset)
+	w, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	h, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Width : Height", fmt.Sprintf("%d : %d", w, h)})
 
-	x := getWORD(data, &offset)
-	y := getWORD(data, &offset)
+	x, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	y, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Position x : y", fmt.Sprintf("%d : %d", x, y)})
 
-	nPlanes := getUBYTE(data, &offset)
+	nPlanes, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Number of planes", fmt.Sprintf("%d", nPlanes)})
 
-	masking := getUBYTE(data, &offset)
+	masking, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	switch masking {
 	case 0:
 		result = append(result, [2]string{"Masking", "None"})
@@ -46,7 +64,10 @@ func handleIlbmBmhd(data []byte) StructResult {
 		result = append(result, [2]string{"Masking", "Lasso"})
 	}
 
-	compression := getUBYTE(data, &offset)
+	compression, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	switch compression {
 	case 0:
 		result = append(result, [2]string{"Compression", "None"})
@@ -56,21 +77,36 @@ func handleIlbmBmhd(data []byte) StructResult {
 
 	offset++ // ignore pad1
 
-	transparentColor := getUWORD(data, &offset)
+	transparentColor, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Transparent Color", fmt.Sprintf("%d", transparentColor)})
 
-	xAspect := getUBYTE(data, &offset)
-	yAspect := getUBYTE(data, &offset)
+	xAspect, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	yAspect, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Aspect Ratio x : y", fmt.Sprintf("%d : %d", xAspect, yAspect)})
 
-	pageWidth := getWORD(data, &offset)
-	pageHeight := getWORD(data, &offset)
+	pageWidth, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	pageHeight, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Page Width : Height", fmt.Sprintf("%d : %d", pageWidth, pageHeight)})
 
-	return result
+	return result, nil
 }
 
-func handleIlbmCmap(data []byte) StructResult {
+func handleIlbmCmap(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CMAP chunk")
 
 	//typedef struct {
@@ -91,10 +127,10 @@ func handleIlbmCmap(data []byte) StructResult {
 			fmt.Sprintf("%d : %d : %d", red, green, blue)})
 		offset += 3
 	}
-	return result
+	return result, nil
 }
 
-func handleIlbmGrab(data []byte) StructResult {
+func handleIlbmGrab(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.GRAB chunk")
 
 	//typedef struct {
@@ -104,28 +140,37 @@ func handleIlbmGrab(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	x := getWORD(data, &offset)
-	y := getWORD(data, &offset)
+	x, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
+	y, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Position x : y", fmt.Sprintf("%d : %d", x, y)})
 
-	return result
+	return result, nil
 }
 
-func handleIlbmCamg(data []byte) StructResult {
+func handleIlbmCamg(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CAMG chunk")
 
 	var offset uint32
 	var result StructResult
 
-	viewMode := getULONG(data, &offset)
+	viewMode, err := getBeUlong(data, &offset)
+	if err != nil {
+		return result, err
+	}
 
 	// TODO: decode viewMode
 	result = append(result, [2]string{"View Mode", fmt.Sprintf("%032b", viewMode)})
 
-	return result
+	return result, nil
 }
 
-func handleIlbmDpi(data []byte) StructResult {
+func handleIlbmDpi(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.DPI chunk")
 
 	// typedef struct {
@@ -136,15 +181,22 @@ func handleIlbmDpi(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	hDPI := getUWORD(data, &offset)
-	vDPI := getUWORD(data, &offset)
+	hDPI, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Horizontal DPI", fmt.Sprintf("%d", hDPI)})
+
+	vDPI, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Vertical DPI", fmt.Sprintf("%d", vDPI)})
 
-	return result
+	return result, err
 }
 
-func handleIlbmDest(data []byte) StructResult {
+func handleIlbmDest(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.DEST chunk")
 
 	//typedef struct {
@@ -158,20 +210,36 @@ func handleIlbmDest(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	depth := getUBYTE(data, &offset)
+	depth, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Depth", fmt.Sprintf("%d", depth)})
+
 	offset++ // ignore pad1
-	planePick := getUWORD(data, &offset)
+
+	planePick, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Plane Pick", fmt.Sprintf("%d", planePick)})
-	planeOnOff := getUWORD(data, &offset)
+
+	planeOnOff, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Plane On/Off", fmt.Sprintf("%d", planeOnOff)})
-	planeMask := getUWORD(data, &offset)
+
+	planeMask, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Plane Mask", fmt.Sprintf("%d", planeMask)})
 
-	return result
+	return result, nil
 }
 
-func handleIlbmSprt(data []byte) StructResult {
+func handleIlbmSprt(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.SPRT chunk")
 
 	// typedef UWORD SpritePrecedence;
@@ -179,13 +247,16 @@ func handleIlbmSprt(data []byte) StructResult {
 	var offset uint32
 	var result StructResult
 
-	spritePrecedence := getUWORD(data, &offset)
+	spritePrecedence, err := getBeUword(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Sprite Precedence", fmt.Sprintf("%d", spritePrecedence)})
 
-	return result
+	return result, nil
 }
 
-func handleIlbmCrng(data []byte) StructResult {
+func handleIlbmCrng(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CRNG chunk")
 
 	//typedef struct {
@@ -199,19 +270,35 @@ func handleIlbmCrng(data []byte) StructResult {
 	var result StructResult
 
 	offset += 2 // ignore pad1
-	rate := getWORD(data, &offset)
+
+	rate, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Rate", fmt.Sprintf("%d", rate)})
-	flags := getWORD(data, &offset)
+
+	flags, err := getBeWord(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	if flags&1 == 1 {
 		result = append(result, [2]string{"Flags", "Active"})
 	}
 	if flags&2 == 2 {
 		result = append(result, [2]string{"Flags", "Reverse"})
 	}
-	low := getUBYTE(data, &offset)
+
+	low, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"Low", fmt.Sprintf("%d", low)})
-	high := getUBYTE(data, &offset)
+
+	high, err := getUbyte(data, &offset)
+	if err != nil {
+		return result, err
+	}
 	result = append(result, [2]string{"High", fmt.Sprintf("%d", high)})
 
-	return result
+	return result, nil
 }

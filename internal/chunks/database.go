@@ -4,11 +4,11 @@
 package chunks
 
 import (
-	"log"
+	"fmt"
 )
 
 type StructResult [][2]string
-type ChunkHandler func(data []byte) StructResult
+type ChunkHandler func(data []byte) (StructResult, error)
 type ChunkData struct {
 	Handler     ChunkHandler
 	Description string
@@ -112,15 +112,19 @@ var structData = map[string]ChunkData{
 	"YUVN": {nil, "YUV Image Data"},
 }
 
-func GetStructData(chType string, data []byte) (string, StructResult) {
+func GetStructData(chType string, data []byte) (string, StructResult, error) {
 	var result StructResult
 	var description string
+	var err error
 
 	if chunkData, exists := structData[chType]; exists {
 		description = chunkData.Description
 		handler := chunkData.Handler
 		if handler != nil {
-			result = handler(data)
+			result, err = handler(data)
+			if err != nil {
+				result = append(result, [2]string{"", fmt.Sprintf("(error: %s)", err)})
+			}
 		} else {
 			result = append(result, [2]string{"", "(not available)"})
 		}
@@ -129,80 +133,74 @@ func GetStructData(chType string, data []byte) (string, StructResult) {
 		result = append(result, [2]string{"", "(unknown)"})
 	}
 
-	return description, result
+	return description, result, err
 }
 
-func getUWORD(data []byte, offset *uint32) uint16 {
+func getBeUword(data []byte, offset *uint32) (uint16, error) {
 	var result uint16
 
 	if len(data) < int(*offset)+2 {
-		log.Printf("Data too short for UWORD")
-		return 0
+		return 0, fmt.Errorf("data too short for UWORD")
 	}
 	result = uint16(data[*offset])<<8 | uint16(data[*offset+1])
 	*offset += 2
-	return result
+	return result, nil
 }
 
-func getWORD(data []byte, offset *uint32) int16 {
+func getBeWord(data []byte, offset *uint32) (int16, error) {
 	var result int16
 
 	if len(data) < int(*offset)+2 {
-		log.Printf("Data too short for WORD")
-		return 0
+		return 0, fmt.Errorf("data too short for WORD")
 	}
 	result = int16(data[*offset])<<8 | int16(data[*offset+1])
 	*offset += 2
-	return result
+	return result, nil
 }
 
-func getULONG(data []byte, offset *uint32) uint32 {
+func getBeUlong(data []byte, offset *uint32) (uint32, error) {
 	var result uint32
 
 	if len(data) < int(*offset)+4 {
-		log.Printf("Data too short for ULONG")
-		return 0
+		return 0, fmt.Errorf("data too short for ULONG")
 	}
 	result = uint32(data[*offset])<<24 | uint32(data[*offset+1])<<16 |
 		uint32(data[*offset+2])<<8 | uint32(data[*offset+3])
 	*offset += 4
-	return result
+	return result, nil
 }
 
-func getLONG(data []byte, offset *uint32) int32 {
+func getBeLong(data []byte, offset *uint32) (int32, error) {
 	var result int32
 
 	if len(data) < int(*offset)+4 {
-		log.Printf("Data too short for LONG")
-		return 0
+		return 0, fmt.Errorf("data too short for LONG")
 	}
 	result = int32(data[*offset])<<24 | int32(data[*offset+1])<<16 |
 		int32(data[*offset+2])<<8 | int32(data[*offset+3])
 	*offset += 4
-	return result
+	return result, nil
 }
 
-func getUBYTE(data []byte, offset *uint32) uint8 {
+func getUbyte(data []byte, offset *uint32) (uint8, error) {
 	var result uint8
 
 	if len(data) < int(*offset)+1 {
-		log.Printf("Data too short for UBYTE")
-		return 0
+		return 0, fmt.Errorf("data too short for UBYTE")
 	}
 	result = data[*offset]
 	*offset++
-	return result
+	return result, nil
 }
 
-func getBYTE(data []byte, offset *uint32) int8 {
+func getByte(data []byte, offset *uint32) (int8, error) {
 	var result int8
 
 	if len(data) < int(*offset)+1 {
-		log.Printf("Data too short for BYTE")
-		return 0
+		return 0, fmt.Errorf("data too short for BYTE")
 	}
 
 	result = int8(data[*offset])
 	*offset++
-	return result
+	return result, nil
 }

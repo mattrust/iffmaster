@@ -5,6 +5,7 @@ package gui
 
 import (
 	"fmt"
+	"log"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/widget"
@@ -56,7 +57,10 @@ func ConvertIFFChunkToListNode(chunk *chunks.IFFChunk) []ListEntry {
 		for i := 0; i < level; i++ {
 			indentation += "."
 		}
-		description, structData := chunks.GetStructData(chunk.ChType, chunk.Data)
+		description, structData, err := chunks.GetStructData(chunk.ChType, chunk.Data)
+		if err != nil {
+			log.Printf("Error getting struct data for %s: %s", chunk.ChType, err)
+		}
 		nodeList = append(nodeList, ListEntry{
 			label: indentation + chunk.ID,
 			description: fmt.Sprintf(
