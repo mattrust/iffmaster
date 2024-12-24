@@ -16,19 +16,19 @@ type ChunkData struct {
 
 var structData = map[string]ChunkData{
 	// generic chunks
-	"(any).ANNO": {nil, "Annotation"},
-	"(any).AUTH": {nil, "Author"},
-	"(any).CHRS": {nil, "Character String"},
-	"(any).CSET": {nil, "Character Set"},
+	"(any).ANNO": {handleAnyIso8859, "Annotation"},
+	"(any).AUTH": {handleAnyIso8859, "Author"},
+	"(any).CHRS": {nil, "Character String"}, // can contain ANSI codes
+	"(any).CSET": {nil, "Character Set"},    // binary
 	"(any).FRED": {nil, "ASDG Private"},
-	"(any).FVER": {nil, "Version"},
+	"(any).FVER": {handleAnyIso8859, "Version"},
 	"(any).HLID": {nil, "Hotlink"},
 	"(any).INFO": {nil, "Icon Data"},
 	"(any).JUNK": {nil, "To Be Ignored"},
-	"(any).UTF8": {nil, "UTF-8 Character Text"},
-	"(any).NAME": {nil, "Name"},
-	"(any).TEXT": {nil, "ASCII Text"},
-	"(any).(c) ": {nil, "Copyright"},
+	"(any).UTF8": {handleAnyUtf8, "UTF-8 Character Text"},
+	"(any).NAME": {handleAnyIso8859, "Name"},
+	"(any).TEXT": {handleAnyIso8859, "ASCII Text"},
+	"(any).(c) ": {handleAnyIso8859, "Copyright"},
 
 	"8SVX":      {nil, "8-Bit Sampled Voice"},
 	"8SVX.VHDR": {handle8svxVhdr, "Voice Header"},
