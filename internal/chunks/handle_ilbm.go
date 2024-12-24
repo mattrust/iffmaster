@@ -222,19 +222,19 @@ func handleIlbmDest(data []byte) (StructResult, error) {
 	if err != nil {
 		return result, err
 	}
-	result = append(result, [2]string{"Plane Pick", fmt.Sprintf("%d", planePick)})
+	result = append(result, [2]string{"Plane Pick", fmt.Sprintf("%032b", planePick)})
 
 	planeOnOff, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
-	result = append(result, [2]string{"Plane On/Off", fmt.Sprintf("%d", planeOnOff)})
+	result = append(result, [2]string{"Plane On/Off", fmt.Sprintf("%032b", planeOnOff)})
 
 	planeMask, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
-	result = append(result, [2]string{"Plane Mask", fmt.Sprintf("%d", planeMask)})
+	result = append(result, [2]string{"Plane Mask", fmt.Sprintf("%032b", planeMask)})
 
 	return result, nil
 }
