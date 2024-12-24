@@ -137,7 +137,7 @@ func handleAnimDpan(data []byte) StructResult {
 	result = append(result, [2]string{"Number of Frames", fmt.Sprintf("%d", nframes)})
 
 	flags := getULONG(data, &offset)
-	result = append(result, [2]string{"Flags", fmt.Sprintf("0x%x", flags)})
+	result = append(result, [2]string{"Flags", fmt.Sprintf("%032b", flags)})
 
 	return result
 }
