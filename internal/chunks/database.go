@@ -54,6 +54,11 @@ var structData = map[string]ChunkData{
 
 	"CMUS": {nil, "Musical Score"},
 	"CSET": {nil, "Text Character Set"},
+
+	"CTLG":      {nil, "Catalog"},
+	"CTLG.LANG": {handleAnyIso8859, "Language"},
+	"CTLG.STRS": {nil, "Strings"},
+
 	"DEEP": {nil, "Chunky Pixel Image"},
 	"DTYP": {nil, "DataType Identification"},
 	"DR2D": {nil, "2-D Objects"},
@@ -97,6 +102,26 @@ var structData = map[string]ChunkData{
 	"OB3D": {nil, "3-D Object Format"},
 	"PGTB": {nil, "Program Traceback"},
 	"PMBC": {nil, "High-color Image Format"},
+
+	"PREF":      {nil, "Preferences"},
+	"PREF.PRHD": {handlePrefPrhd, "Preferences Header"},
+	"PREF.ASL ": {nil, "ASL Preferences"},
+	"PREF.FONT": {nil, "Font Preferences"},
+	"PREF.ICTL": {nil, "IControl Preferences"},
+	"PREF.INPT": {nil, "Input Preferences"},
+	"PREF.KMSW": {nil, "Keyboard/Mouse Preferences"},
+	"PREF.LCLE": {nil, "Locale Preferences"},
+	"PREF.PALT": {nil, "Palette Preferences"},
+	"PREF.CMAP": {handleIlbmCmap, "Color Map"},
+	"PREF.NPTR": {nil, "Pointer Preferences"},
+	"PREF.PTXT": {nil, "Printer Preferences"},
+	"PREF.PUNT": {nil, "Printer Unit Preferences"},
+	"PREF.PDEV": {nil, "Printer Device Preferences"},
+	"PREF.PGFX": {nil, "Printer Graphics Preferences"},
+	"PREF.SCRM": {nil, "Screen Mode Preferences"},
+	"PREF.SERL": {nil, "Serial Preferences"},
+	"PREF.WANR": {nil, "Wanderer Preferences"}, // AROS Wanderer
+
 	"PRSP": {nil, "Perspective Move"},
 	"RGBN": {nil, "Image Data"},
 	"RGB8": {nil, "Image Data"},
