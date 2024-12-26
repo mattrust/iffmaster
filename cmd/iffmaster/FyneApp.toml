@@ -1,0 +1,15 @@
+Website = "https://github.com/mattrust/iffmaster"
+
+[Details]
+  Icon = "Icon.png"
+  Name = "IFF Master"
+  ID = "com.example.iffmaster"
+  Version = "1.0.0"
+  Build = 13
+
+[LinuxAndBSD]
+  GenericName = "File Viewer"
+  Categories = ["Utility", "Viewer"]
+  Comment = "Inspect IFF files"
+  Keywords = ["browser", "iff", "viewer", "file"]
+  ExecParams = "--version"
