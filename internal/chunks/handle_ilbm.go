@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Matthias Rustler
+// Licensed under the MIT License - see LICENSE for details
+
 package chunks
 
 import (
