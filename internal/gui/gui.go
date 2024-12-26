@@ -72,7 +72,13 @@ func OpenGUI() {
 			fileDlg.Show()
 		}),
 		widget.NewToolbarAction(theme.InfoIcon(), func() {
-			dialog.ShowInformation("About", "IFF Master\nVersion 1.0", appData.win)
+			dialog.ShowInformation("About",
+				"IFF Master\n"+
+					"Version: v1.0.0\n\n"+
+					"An Open Source tool for inspecting of IFF(EA-85)-Dateien.\n\n"+
+					"License: MIT.\n\n"+
+					"Developed by Matthias Rustler and the Open Source community.\n"+
+					"Github project page https://github.com/mattrust/iffmaster.", appData.win)
 		}),
 	)
 
