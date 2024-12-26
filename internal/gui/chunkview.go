@@ -11,6 +11,7 @@ import (
 	"golang.org/x/text/encoding/charmap"
 )
 
+// NewHexTableView creates a new fyne table for the hexadecimal view.
 func NewHexTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
@@ -46,6 +47,7 @@ func NewHexTableView(appData *AppData) *widget.Table {
 	return table
 }
 
+// NewIsoTableView creates a new fyne table for the ISO-8859-1 view.
 func NewIsoTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
@@ -82,6 +84,7 @@ func NewIsoTableView(appData *AppData) *widget.Table {
 	return table
 }
 
+// NewStructTableView creates a new fyne table for the structure view.
 func NewStructTableView(appData *AppData) *widget.Table {
 	table := widget.NewTable(
 		// Provide the size of the table
@@ -113,6 +116,8 @@ func NewStructTableView(appData *AppData) *widget.Table {
 	return table
 }
 
+// iso8859ToUtf8Char converts an ISO-8859-1 character to a UTF-8 string.
+// Some special characters are converted to escape sequences.
 func iso8859ToUtf8Char(isoChar byte) string {
 	// handle special characters
 	if isoChar == 0 {

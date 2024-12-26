@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Matthias Rustler
 // Licensed under the MIT License - see LICENSE for details
 
+// Package gui provides the GUI for the IFF Master application
 package gui
 
 import (
@@ -32,6 +33,7 @@ type AppData struct {
 	structTableView *widget.Table
 }
 
+// OpenGUI layouts the main window and opens it
 func OpenGUI() {
 	var appData AppData
 	var fileDlg *dialog.FileDialog

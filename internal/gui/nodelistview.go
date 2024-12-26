@@ -12,6 +12,8 @@ import (
 	"github.com/mattrust/iffmaster/internal/chunks"
 )
 
+// ListEntry is a struct to hold the data for the list view.
+// It embeds the IFFChunk struct to hold the chunk data.
 type ListEntry struct {
 	label            string
 	description      string
@@ -19,6 +21,8 @@ type ListEntry struct {
 	*chunks.IFFChunk // Embedding the IFFChunk struct
 }
 
+// NewListView creates a new fyne list view.
+// It creates a list widget with the chunk ID.
 func NewListView(appData *AppData) *widget.List {
 	list := widget.NewList(
 
@@ -48,6 +52,8 @@ func NewListView(appData *AppData) *widget.List {
 	return list
 }
 
+// ConvertIFFChunkToListNode traverses to a IFF chunk nodes and appends
+// data which is neede for ghe GUI.
 func ConvertIFFChunkToListNode(chunk *chunks.IFFChunk) []ListEntry {
 	var nodeList []ListEntry
 

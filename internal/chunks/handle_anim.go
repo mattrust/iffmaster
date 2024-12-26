@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// handleAnimAnhd processes the ANIM.ANHD chunk.
 func handleAnimAnhd(data []byte) (StructResult, error) {
 	log.Println("Handling ANIM.ANHD chunk")
 
@@ -151,6 +152,7 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleAnimDpan processes the ANIM.DPAN chunk.
 func handleAnimDpan(data []byte) (StructResult, error) {
 	log.Println("Handling ANIM.DPAN chunk")
 

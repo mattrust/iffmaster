@@ -7,13 +7,19 @@ import (
 	"fmt"
 )
 
+// StructResult is a list of key-value pairs.
 type StructResult [][2]string
+
+// ChunkHandler is a function that processes a chunk and returns the structured data.
 type ChunkHandler func(data []byte) (StructResult, error)
+
+// ChunkData contains the handler and the description for each chunk type.
 type ChunkData struct {
 	Handler     ChunkHandler
 	Description string
 }
 
+// structData contains the handler and the description for each chunk type.
 var structData = map[string]ChunkData{
 	// generic chunks
 	"(any).ANNO": {handleAnyIso8859, "Annotation"},
@@ -137,6 +143,11 @@ var structData = map[string]ChunkData{
 	"YUVN": {nil, "YUV Image Data"},
 }
 
+// GetStructData returns the description and the structured data of a chunk.
+// - chType is the chunk type, e.g. "ILBM", "ILBM.BMHD"
+// - data is the chunk data
+// It returns the description and the structured data as a list of key-value pairs.
+// In case of an error the incomplete result is returned.
 func GetStructData(chType string, data []byte) (string, StructResult, error) {
 	var result StructResult
 	var description string
@@ -161,6 +172,9 @@ func GetStructData(chType string, data []byte) (string, StructResult, error) {
 	return description, result, err
 }
 
+// getBeUword reads a big-endian unsigned WORD from the data at the given offset.
+// The offset is incremented by 2.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getBeUword(data []byte, offset *uint32) (uint16, error) {
 	var result uint16
 
@@ -172,6 +186,9 @@ func getBeUword(data []byte, offset *uint32) (uint16, error) {
 	return result, nil
 }
 
+// getBeWord reads a big-endian signed WORD from the data at the given offset.
+// The offset is incremented by 2.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getBeWord(data []byte, offset *uint32) (int16, error) {
 	var result int16
 
@@ -183,6 +200,9 @@ func getBeWord(data []byte, offset *uint32) (int16, error) {
 	return result, nil
 }
 
+// getBeUlong reads a big-endian unsigned LONG from the data at the given offset.
+// The offset is incremented by 4.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getBeUlong(data []byte, offset *uint32) (uint32, error) {
 	var result uint32
 
@@ -195,6 +215,9 @@ func getBeUlong(data []byte, offset *uint32) (uint32, error) {
 	return result, nil
 }
 
+// getBeLong reads a big-endian signed LONG from the data at the given offset.
+// The offset is incremented by 4.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getBeLong(data []byte, offset *uint32) (int32, error) {
 	var result int32
 
@@ -207,6 +230,9 @@ func getBeLong(data []byte, offset *uint32) (int32, error) {
 	return result, nil
 }
 
+// getUbyte reads an unsigned BYTE from the data at the given offset.
+// The offset is incremented by 1.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getUbyte(data []byte, offset *uint32) (uint8, error) {
 	var result uint8
 
@@ -218,6 +244,9 @@ func getUbyte(data []byte, offset *uint32) (uint8, error) {
 	return result, nil
 }
 
+// getByte reads a signed BYTE from the data at the given offset.
+// The offset is incremented by 1.
+// In case of an error, it returns 0 and the error. The offset is unchanged.
 func getByte(data []byte, offset *uint32) (int8, error) {
 	var result int8
 

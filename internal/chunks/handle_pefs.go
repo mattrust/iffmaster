@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// handlePrefPrhd processes the PREF.PRHD chunk.
 func handlePrefPrhd(data []byte) (StructResult, error) {
 	log.Println("Handling PREF.PRHD chunk")
 

@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// handle8svxVhdr processes the 8SVX.VHDR chunk.
 func handle8svxVhdr(data []byte) (StructResult, error) {
 	log.Println("Handling 8SVX.VHDR chunk")
 
@@ -74,6 +75,7 @@ func handle8svxVhdr(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handle8svxAtakRlse processes the 8SVX.ATAK or 8SVX.RLSE chunk.
 func handle8svxAtakRlse(data []byte) (StructResult, error) {
 	log.Println("Handling 8SVX.ATAK or 8SVX.RLSE chunk")
 

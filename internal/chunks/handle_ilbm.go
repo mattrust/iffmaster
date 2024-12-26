@@ -8,6 +8,7 @@ import (
 	"log"
 )
 
+// handleIlbmBmhd processes the ILBM.BMHD chunk.
 func handleIlbmBmhd(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.BMHD chunk")
 
@@ -109,6 +110,7 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmCmap processes the ILBM.CMAP chunk.
 func handleIlbmCmap(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CMAP chunk")
 
@@ -133,6 +135,7 @@ func handleIlbmCmap(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmGrab processes the ILBM.GRAB chunk.
 func handleIlbmGrab(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.GRAB chunk")
 
@@ -156,6 +159,7 @@ func handleIlbmGrab(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmCamg processes the ILBM.CAMG chunk.
 func handleIlbmCamg(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CAMG chunk")
 
@@ -173,6 +177,7 @@ func handleIlbmCamg(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmDpi processes the ILBM.DPI chunk.
 func handleIlbmDpi(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.DPI chunk")
 
@@ -199,6 +204,7 @@ func handleIlbmDpi(data []byte) (StructResult, error) {
 	return result, err
 }
 
+// handleIlbmDest processes the ILBM.DEST chunk.
 func handleIlbmDest(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.DEST chunk")
 
@@ -242,6 +248,7 @@ func handleIlbmDest(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmSplt processes the ILBM.SPLT chunk.
 func handleIlbmSprt(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.SPRT chunk")
 
@@ -259,6 +266,7 @@ func handleIlbmSprt(data []byte) (StructResult, error) {
 	return result, nil
 }
 
+// handleIlbmCrng processes the ILBM.CRNG chunk.
 func handleIlbmCrng(data []byte) (StructResult, error) {
 	log.Println("Handling ILBM.CRNG chunk")
 

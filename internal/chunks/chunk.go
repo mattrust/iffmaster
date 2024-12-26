@@ -1,6 +1,7 @@
 // Copyright (c) 2025 Matthias Rustler
 // Licensed under the MIT License - see LICENSE for details
 
+// Package chunks provides functions to read IFF files.
 package chunks
 
 import (
@@ -13,6 +14,7 @@ import (
 	"fyne.io/fyne/v2"
 )
 
+// IFFChunk represents a chunk in an IFF file.
 type IFFChunk struct {
 	// the chunk data from the file
 	ID    string
@@ -31,7 +33,10 @@ type IFFChunk struct {
 	ChType string
 }
 
+// ReadIFFFile reads an IFF file and returns the root chunk.
+// In case of an error, the function returns nil and the error.
 func ReadIFFFile(reader fyne.URIReadCloser) (*IFFChunk, error) {
+	// TODO: get rid of fyne.URIReadCloser
 	var chunk *IFFChunk
 
 	file, err := os.Open(reader.URI().Path())
@@ -51,7 +56,10 @@ func ReadIFFFile(reader fyne.URIReadCloser) (*IFFChunk, error) {
 	return chunk, err
 }
 
+// readChunkID reads the ID of a chunk from the reader.
+// In case of an error, the function returns an empty string and the error.
 func readChunkID(reader io.Reader) (string, error) {
+	//TODO: check for valid characters
 	var id [4]byte
 	_, err := reader.Read(id[:])
 	if err != nil {
@@ -61,6 +69,8 @@ func readChunkID(reader io.Reader) (string, error) {
 	return string(id[:]), nil
 }
 
+// readChunkSize reads the size of a chunk from the reader.
+// In case of an error, the function returns 0 and the error.
 func readChunkSize(reader io.Reader) (uint32, error) {
 	var size uint32
 	err := binary.Read(reader, binary.BigEndian, &size)
@@ -71,6 +81,8 @@ func readChunkSize(reader io.Reader) (uint32, error) {
 	return size, nil
 }
 
+// readChunk recursively reads the chunks from the reader.
+// In case of an error, the function returns nil and the error.
 func readChunk(reader io.Reader, parentChunk *IFFChunk, maxSize int64, level int) (*IFFChunk, error) {
 	var chunk IFFChunk
 	var err error
@@ -159,6 +171,8 @@ func readChunk(reader io.Reader, parentChunk *IFFChunk, maxSize int64, level int
 	return &chunk, nil
 }
 
+// PrintIffChunk prints the chunk and its children to stdout.
+// The level parameter must be set to 0.
 func PrintIffChunk(chunk *IFFChunk, level int) {
 	for i := 0; i < level; i++ {
 		fmt.Print("  ")
@@ -169,6 +183,7 @@ func PrintIffChunk(chunk *IFFChunk, level int) {
 	}
 }
 
+// isGeneric returns true if the chunk ID is generic.
 func isGeneric(id string) bool {
 
 	return slices.Contains([]string{"ANNO", "AUTH", "CHRS",
