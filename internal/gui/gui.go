@@ -5,6 +5,9 @@
 package gui
 
 import (
+	"bytes"
+	"io"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -58,7 +61,15 @@ func OpenGUI(version string) {
 
 				appData.topContainer.Refresh()
 
-				appData.chunks, err = chunks.ReadIFFFile(reader)
+				// read the file to get its length
+				data, err := io.ReadAll(reader)
+				if err != nil {
+					dialog.ShowError(err, appData.win)
+					return
+				}
+
+				appData.chunks, err = chunks.ReadIFFFile(bytes.NewReader(data),
+					int64(len(data)))
 				if err != nil {
 					dialog.ShowError(err, appData.win)
 					return

@@ -8,10 +8,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"os"
 	"slices"
-
-	"fyne.io/fyne/v2"
 )
 
 // IFFChunk represents a chunk in an IFF file.
@@ -34,24 +31,11 @@ type IFFChunk struct {
 }
 
 // ReadIFFFile reads an IFF file and returns the root chunk.
+// fileLen is the length of the file in bytes.
 // In case of an error, the function returns nil and the error.
-func ReadIFFFile(reader fyne.URIReadCloser) (*IFFChunk, error) {
-	// TODO: get rid of fyne.URIReadCloser
-	var chunk *IFFChunk
+func ReadIFFFile(reader io.Reader, fileLen int64) (*IFFChunk, error) {
 
-	file, err := os.Open(reader.URI().Path())
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	fileInfo, err := file.Stat()
-	if err != nil {
-		return nil, err
-	}
-	fileLen := fileInfo.Size()
-
-	chunk, err = readChunk(reader, nil, fileLen, 0)
+	chunk, err := readChunk(reader, nil, fileLen, 0)
 
 	return chunk, err
 }
