@@ -34,7 +34,7 @@ type AppData struct {
 }
 
 // OpenGUI layouts the main window and opens it
-func OpenGUI() {
+func OpenGUI(version string) {
 	var appData AppData
 	var fileDlg *dialog.FileDialog
 
@@ -74,7 +74,7 @@ func OpenGUI() {
 		widget.NewToolbarAction(theme.InfoIcon(), func() {
 			dialog.ShowInformation("About",
 				"IFF Master\n"+
-					"Version: v1.0.0\n\n"+
+					"Version: v"+version+"\n\n"+
 					"An Open Source tool for inspecting of IFF(EA-85)-Dateien.\n\n"+
 					"License: MIT.\n\n"+
 					"Developed by Matthias Rustler and the Open Source community.\n"+

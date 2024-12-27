@@ -20,14 +20,12 @@ import (
 	"github.com/mattrust/iffmaster/internal/gui"
 )
 
-const version = "1.0.0"
-
 func main() {
 	showVersion := flag.Bool("version", false, "Display the version of iffmaster")
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Println("iffmaster version", version)
+		fmt.Println("iffmaster version", Version)
 		os.Exit(0)
 	}
 
@@ -36,6 +34,6 @@ func main() {
 		//fmt.Println("Filename provided:", filename)
 		// You can add code here to handle the filename, e.g., open the file
 	} else {
-		gui.OpenGUI()
+		gui.OpenGUI(Version)
 	}
 }
