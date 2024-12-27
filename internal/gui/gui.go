@@ -7,6 +7,8 @@ package gui
 import (
 	"bytes"
 	"io"
+	"log"
+	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -36,8 +38,10 @@ type AppData struct {
 	structTableView *widget.Table
 }
 
-// OpenGUI layouts the main window and opens it
-func OpenGUI(version string) {
+// OpenGUI layouts the main window and opens it.
+// If a filename is given, it reads the file and displays its content.
+// The version string is used to display the version of the application.
+func OpenGUI(filename string, version string) {
 	var appData AppData
 	var fileDlg *dialog.FileDialog
 
@@ -110,5 +114,30 @@ func OpenGUI(version string) {
 	appData.win.SetContent(appData.topContainer)
 
 	appData.win.Resize(fyne.NewSize(800, 600))
+
+	readFileName(&appData, filename)
+
 	appData.win.ShowAndRun()
+}
+
+// readFileName reads the file with the given filename and displays its content.
+// If the filename is empty, it does nothing.
+func readFileName(appData *AppData, filename string) {
+	log.Print("readFileName: ", filename)
+	if filename != "" {
+		data, err := os.ReadFile(filename)
+		if err != nil {
+			dialog.ShowError(err, appData.win)
+			return
+		}
+
+		appData.chunks, err = chunks.ReadIFFFile(bytes.NewReader(data), int64(len(data)))
+		if err != nil {
+			dialog.ShowError(err, appData.win)
+			return
+		}
+
+		appData.nodeList = ConvertIFFChunkToListNode(appData.chunks)
+		appData.topContainer.Refresh()
+	}
 }

@@ -21,6 +21,8 @@ import (
 )
 
 func main() {
+	var filename string
+
 	showVersion := flag.Bool("version", false, "Display the version of iffmaster")
 	flag.Parse()
 
@@ -30,10 +32,8 @@ func main() {
 	}
 
 	if flag.NArg() > 0 {
-		//filename := flag.Arg(0)
-		//fmt.Println("Filename provided:", filename)
-		// You can add code here to handle the filename, e.g., open the file
-	} else {
-		gui.OpenGUI(Version)
+		filename = flag.Arg(0)
 	}
+
+	gui.OpenGUI(filename, Version)
 }
