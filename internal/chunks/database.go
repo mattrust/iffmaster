@@ -111,11 +111,11 @@ var structData = map[string]ChunkData{
 
 	"PREF":      {nil, "Preferences"},
 	"PREF.PRHD": {handlePrefPrhd, "Preferences Header"},
-	"PREF.ASL ": {nil, "ASL Preferences"},
-	"PREF.FONT": {nil, "Font Preferences"},
-	"PREF.ICTL": {nil, "IControl Preferences"},
-	"PREF.INPT": {nil, "Input Preferences"},
-	"PREF.KMSW": {nil, "Keyboard/Mouse Preferences"},
+	"PREF.ASL ": {handlePrefAsl, "ASL Preferences"},
+	"PREF.FONT": {handlePrefFont, "Font Preferences"},
+	"PREF.ICTL": {handlePrefIctl, "IControl Preferences"},
+	"PREF.INPT": {handlePrefInpt, "Input Preferences"},
+	"PREF.KMSW": {handlePrefKmsw, "Keyboard/Mouse Preferences"},
 	"PREF.LCLE": {nil, "Locale Preferences"},
 	"PREF.PALT": {nil, "Palette Preferences"},
 	"PREF.CMAP": {handleIlbmCmap, "Color Map"},
@@ -256,5 +256,22 @@ func getByte(data []byte, offset *uint32) (int8, error) {
 
 	result = int8(data[*offset])
 	*offset++
+	return result, nil
+}
+
+// getStringBuffer reads a string from the data at the given offset.
+// The numer of bytes to read is given by bufLen. The offset is incremented
+// by the bufLen.
+// In case of an error, it returns "" and the error. The offset is unchanged.
+func getStringBuffer(data []byte, offset *uint32, bufLen uint32) (string, error) {
+	var result string
+
+	if len(data) < int(*offset+bufLen) {
+		return "", fmt.Errorf("data too short for String")
+	}
+	high := int(*offset + bufLen)
+	result = string(data[*offset:high])
+
+	*offset += bufLen
 	return result, nil
 }
