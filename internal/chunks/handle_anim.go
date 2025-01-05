@@ -29,6 +29,7 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 	var offset uint32
 	var result StructResult
 
+	// handle operation
 	operation, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, nil
@@ -59,6 +60,7 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Mask", fmt.Sprintf("%d", mask)})
 
+	// handle w,h
 	w, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
@@ -69,6 +71,7 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Width : Height", fmt.Sprintf("%d : %d", w, h)})
 
+	// handle x,y
 	x, err := getBeWord(data, &offset)
 	if err != nil {
 		return result, err
@@ -79,18 +82,21 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Position x : y", fmt.Sprintf("%d : %d", x, y)})
 
+	// handle abstime
 	abstime, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Absolute Time", fmt.Sprintf("%d", abstime)})
 
+	// handle reltime
 	reltime, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Relative Time", fmt.Sprintf("%d", reltime)})
 
+	// handle interleave
 	interleave, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
@@ -99,6 +105,7 @@ func handleAnimAnhd(data []byte) (StructResult, error) {
 
 	offset++ // ignore pad0
 
+	// handle bits
 	bits, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
@@ -165,18 +172,21 @@ func handleAnimDpan(data []byte) (StructResult, error) {
 	var offset uint32
 	var result StructResult
 
+	//
 	version, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Version", fmt.Sprintf("%d", version)})
 
+	// handle nframes
 	nframes, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Number of Frames", fmt.Sprintf("%d", nframes)})
 
+	// handle flags
 	flags, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err

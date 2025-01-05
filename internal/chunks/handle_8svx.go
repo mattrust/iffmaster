@@ -25,36 +25,42 @@ func handle8svxVhdr(data []byte) (StructResult, error) {
 	var offset uint32
 	var result StructResult
 
+	// handle oneShotHiSamples
 	oneShotHiSamples, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"One Shot Hi Samples", fmt.Sprintf("%d", oneShotHiSamples)})
 
+	// handle repeatHiSamples
 	repeatHiSamples, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Repeat Hi Samples", fmt.Sprintf("%d", repeatHiSamples)})
 
+	// handle samplesPerHiCycle
 	samplesPerHiCycle, err := getBeUlong(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Samples Per Hi Cycle", fmt.Sprintf("%d", samplesPerHiCycle)})
 
+	// handle samplesPerSec
 	samplesPerSec, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Samples Per Sec", fmt.Sprintf("%d", samplesPerSec)})
 
+	// handle ctOctave
 	ctOctave, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Octave", fmt.Sprintf("%d", ctOctave)})
 
+	// handle sCompression
 	sCompression, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
@@ -66,6 +72,7 @@ func handle8svxVhdr(data []byte) (StructResult, error) {
 		result = append(result, [2]string{"Compression", "Fibonacci-Delta-Encoded"})
 	}
 
+	// handle volume
 	volume, err := getBeLong(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
 	if err != nil {
 		return result, err
@@ -87,12 +94,14 @@ func handle8svxAtakRlse(data []byte) (StructResult, error) {
 	var offset uint32
 	var result StructResult
 
+	// handle duration
 	duration, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Duration", fmt.Sprintf("%d", duration)})
 
+	// handle dest
 	dest, err := getBeLong(data, &offset) // TODO: handle Fixed type (16 bit left, 16 bit right)
 	if err != nil {
 		return result, err

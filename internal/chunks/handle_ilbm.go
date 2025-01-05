@@ -27,6 +27,7 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 	var offset uint32
 	var result StructResult
 
+	// handle w, h
 	w, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
@@ -37,6 +38,7 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Width : Height", fmt.Sprintf("%d : %d", w, h)})
 
+	// handle x, y
 	x, err := getBeWord(data, &offset)
 	if err != nil {
 		return result, err
@@ -47,12 +49,14 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Position x : y", fmt.Sprintf("%d : %d", x, y)})
 
+	// handle nPlanes
 	nPlanes, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Number of planes", fmt.Sprintf("%d", nPlanes)})
 
+	// handle masking
 	masking, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
@@ -68,6 +72,7 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 		result = append(result, [2]string{"Masking", "Lasso"})
 	}
 
+	// handle compression
 	compression, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
@@ -81,12 +86,14 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 
 	offset++ // ignore pad1
 
+	// handle transparentColor
 	transparentColor, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Transparent Color", fmt.Sprintf("%d", transparentColor)})
 
+	// handle xAspect, yAspect
 	xAspect, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
@@ -97,6 +104,7 @@ func handleIlbmBmhd(data []byte) (StructResult, error) {
 	}
 	result = append(result, [2]string{"Aspect Ratio x : y", fmt.Sprintf("%d : %d", xAspect, yAspect)})
 
+	// handle pageWidth, pageHeight
 	pageWidth, err := getBeWord(data, &offset)
 	if err != nil {
 		return result, err
@@ -227,18 +235,21 @@ func handleIlbmDest(data []byte) (StructResult, error) {
 
 	offset++ // ignore pad1
 
+	// handle planePick
 	planePick, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Plane Pick", fmt.Sprintf("%032b", planePick)})
 
+	// handle planeOnOff
 	planeOnOff, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Plane On/Off", fmt.Sprintf("%032b", planeOnOff)})
 
+	// handle planeMask
 	planeMask, err := getBeUword(data, &offset)
 	if err != nil {
 		return result, err
@@ -282,12 +293,14 @@ func handleIlbmCrng(data []byte) (StructResult, error) {
 
 	offset += 2 // ignore pad1
 
+	// handle rate
 	rate, err := getBeWord(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Rate", fmt.Sprintf("%d", rate)})
 
+	// handle flags
 	flags, err := getBeWord(data, &offset)
 	if err != nil {
 		return result, err
@@ -299,12 +312,14 @@ func handleIlbmCrng(data []byte) (StructResult, error) {
 		result = append(result, [2]string{"Flags", "Reverse"})
 	}
 
+	// handle low
 	low, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
 	}
 	result = append(result, [2]string{"Low", fmt.Sprintf("%d", low)})
 
+	// handle high
 	high, err := getUbyte(data, &offset)
 	if err != nil {
 		return result, err
