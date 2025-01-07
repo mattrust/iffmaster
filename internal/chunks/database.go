@@ -116,10 +116,12 @@ var structData = map[string]ChunkData{
 	"PREF.ICTL": {handlePrefIctl, "IControl Preferences"},
 	"PREF.INPT": {handlePrefInpt, "Input Preferences"},
 	"PREF.KMSW": {handlePrefKmsw, "Keyboard/Mouse Preferences"},
-	"PREF.LCLE": {nil, "Locale Preferences"},
-	"PREF.PALT": {nil, "Palette Preferences"},
+	"PREF.LCLE": {handlePrefLcle, "Locale Preferences"},
+	"PREF.OSCN": {handlePrefOscn, "Overscan Preferences"},
+	"PREF.PALT": {handlePrefPalt, "Palette Preferences"},
 	"PREF.CMAP": {handleIlbmCmap, "Color Map"},
-	"PREF.NPTR": {nil, "Pointer Preferences"},
+	"PREF.PNTR": {handlePrefPntr, "Pointer Preferences"},
+	"PREF.NPTR": {handlePrefNptr, "New Pointer Preferences"}, // AROS specific
 	"PREF.PTXT": {nil, "Printer Preferences"},
 	"PREF.PUNT": {nil, "Printer Unit Preferences"},
 	"PREF.PDEV": {nil, "Printer Device Preferences"},
@@ -271,6 +273,23 @@ func getStringBuffer(data []byte, offset *uint32, bufLen uint32) (string, error)
 	}
 	high := int(*offset + bufLen)
 	result = string(data[*offset:high])
+
+	*offset += bufLen
+	return result, nil
+}
+
+// getStringBuffer reads a string from the data at the given offset.
+// The numer of bytes to read is given by bufLen. The offset is incremented
+// by the bufLen.
+// In case of an error, it returns "" and the error. The offset is unchanged.
+func getByteBuffer(data []byte, offset *uint32, bufLen uint32) ([]byte, error) {
+	var result []byte
+
+	if len(data) < int(*offset+bufLen) {
+		return nil, fmt.Errorf("data too short for []byte")
+	}
+	high := int(*offset + bufLen)
+	result = data[*offset:high]
 
 	*offset += bufLen
 	return result, nil
